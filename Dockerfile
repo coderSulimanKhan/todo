@@ -1,8 +1,15 @@
-FROM oven/bun:1-alpine
+FROM oven/bun:1-alpine AS frontend
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/bun.lockb ./
+RUN bun install --frozen-lockfile
+COPY frontend .
+RUN bun run build
+
+FROM oven/bun:1-alpine AS backend
 WORKDIR /app
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 COPY . .
-RUN cd frontend && bun install --frozen-lockfile && bun run build
+COPY --from=frontend /app/frontend/dist ./frontend/dist
 EXPOSE 4000
-ENTRYPOINT ["bun", "run", "backend/server.js"]
+ENTRYPOINT ["bun", "backend/server.js"]
