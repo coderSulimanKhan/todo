@@ -6,7 +6,7 @@ const connectDB = async () => {
     await connect(envs.MONGO_URI);
     console.log("Database connected");
   } catch (error) {
-    console.log("Database connection failed");
+    console.log("Database connection failed here", error);
     process.exit(1);
   }
 };
